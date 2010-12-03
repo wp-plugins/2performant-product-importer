@@ -58,7 +58,8 @@
 				label: '',
 				key: '',
 				value: '',
-				type: ''
+				type: '',
+				selectable_type: false
 			}, data);
 			
 			return $(this)
@@ -116,29 +117,39 @@
 						key: $('.tp-field-key', this),
 						value: $('.tp-field-value', this),
 					},
-					data = $(this).data('fieldData')
+					data = $(this).data('fieldData'),
+					t = $('<td />').html(target.label.html()).addClass('tp-field-label')
 				;
+				target.label.replaceWith(t);
+				target.label = t;
 				for(var i in target) {
-					target[i].html(
-						$('<input type="text" />')
-							.attr('name',i)
-							.val(data[i])
+					var edit_control = (i != 'value') ? ( 
+							$('<input type="text" />')
+								.attr('name',i)
+								.val(data[i])
+						) : (
+							$('<textarea />')
+								.attr('name',i)
+								.text(data[i])
+						);
+					target[i].html(edit_control);
+				}
+				if(data.selectable_type) {
+					target['label'].append(
+						$('<select />')
+							.attr('name','type')
+							.append(
+								$('<option />')
+									.val('text')
+									.html('Single line')
+							).append(
+								$('<option />')
+									.val('textarea')
+									.html('Multi-line')
+							)
+							.val(data['type'])
 					);
 				}
-				target['label'].append(
-					$('<select />')
-						.attr('name','type')
-						.append(
-							$('<option />')
-								.val('text')
-								.html('Single line')
-						).append(
-							$('<option />')
-								.val('textarea')
-								.html('Multi-line')
-						)
-						.val(data['type'])
-				);
 				
 				$('.tp-field-action > a.tp-edit',this).remove();
 				$('.tp-field-action',this).append(
@@ -201,11 +212,14 @@
 	$(document).ready(function(){
 		$('table.fields#tp_fields_fields').remove();
 		$.tpFieldTable(tp_options_fields_fields,tp_options_fields_fields_name).insertAfter('#tp_options_fields_fields_anchor');
-		$('#tp_options_fields_fields_help, #tp_options_fields_other_fields_help').click(function(e){
+		$('#tp_options_fields_fields_help, #tp_options_fields_other_fields_help, #tp_options_templates_templates_help').click(function(e){
 			e.preventDefault();
+			$('html, body').animate({scrollTop:0}, 'fast');
 			$('#contextual-help-link').click();
 		});
 		$('table.fields#tp_fields_other_fields').remove();
 		$.tpFieldTable(tp_options_fields_other_fields,tp_options_fields_other_fields_name).insertAfter('#tp_options_fields_other_fields_anchor');
+		$('table.fields#tp_templates_templates').remove();
+		$.tpFieldTable(tp_options_templates_templates,tp_options_templates_templates_name).insertAfter('#tp_options_templates_templates_anchor');
 	});
 })(jQuery.noConflict());

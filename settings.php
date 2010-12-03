@@ -56,6 +56,16 @@ function tp_register_settings() {
 					'label' => 'Other custom fields'
 				)
 			)
+		),
+		'templates' => array(
+			'label' => 'Output templates',
+			'settings' => array(
+				'templates' => array(
+					'type' => 'custom',
+					'callback' => 'tp_render_options_templates_templates',
+					'label' => 'User-defined templates'
+				)
+			)
 		)
 	);
 	
@@ -187,6 +197,9 @@ function tp_render_options_fields_fields( $setting ) {
 				'value' => '%aff_link%'
 			),
 		);
+		foreach ( $value as $kk => $vv ) {
+			$value[$kk]['selectable_type'] = true;
+		}
 ?>
 	<p class="description"><?php printf( __( 'See <a href="#" id="%1$s">help section</a> above for details', 'tppi' ), 'tp_options_fields_fields_help' ); ?></p>
 	<script type="text/javascript"><!--//<![CDATA[
@@ -233,6 +246,57 @@ function tp_render_options_fields_other_fields( $setting ) {
 	//*/
 }
 
+function tp_render_options_templates_templates( $setting ) {
+	extract($setting);
+	if ( ! $value )
+		$value = array(
+			'simple' => array(
+				'type' => 'text',
+				'label' => 'Simple',
+				'value' => '%brand%'
+			),
+			'title' => array(
+				'type' => 'text',
+				'label' => 'Product name',
+				'value' => '%title%'
+			),
+			'description' => array(
+				'type' => 'textarea',
+				'label' => 'Product description',
+				'value' => '%description%'
+			),
+			'price' => array(
+				'type' => 'text',
+				'label' => 'Product price',
+				'value' => '%price%'
+			),
+			'aff_link' => array(
+				'type' => 'text',
+				'label' => 'Affiliate link',
+				'value' => '%aff_link%'
+			),
+		);
+?>
+	<p class="description"><?php printf( __( 'See <a href="#" id="%1$s">help section</a> above for details', 'tppi' ), 'tp_options_fields_fields_help' ); ?></p>
+	<script type="text/javascript"><!--//<![CDATA[
+		var tp_options_templates_templates = <?php echo json_encode( $value ); ?>,
+			tp_options_templates_templates_name = '<?php echo $name?>';
+	//]]--></script><a name="tp_options_templates_templates" id="tp_options_templates_templates_anchor"></a>
+<?php
+	//*
+	echo "<table id='tp_templates_templates' class='fields'>";
+	echo "<tr class='head'><th></th><th scope='column'>" . __( 'Key', 'tppi' ) . "</th><th scope='column'>" . __( 'Value', 'tppi' ) . "</th></tr>";
+	foreach ( $value as $i => $p ) {
+		echo "<tr class='product_field tp_$i'><th scope='row'>" . $p['label'] . "</th><td class='product_field_key'><em>" . esc_attr( $i ) . "</em></td><td class='product_field_value'>" . esc_attr( $p['value'] );
+		foreach ( $p as $j => $v ) {
+			echo "<input type='hidden' name='{$name}[{$i}][{$j}]' id='{$id}_{$i}_{$j}' value='$v' />";
+		}
+		echo "</td></tr>";
+	}
+	echo "</table>";
+	//*/
+}
+
 function tp_plugin_settings() {
 	include_once 'api.php';
 	
@@ -246,6 +310,9 @@ function tp_plugin_settings() {
 <style type="text/css">
 table.tp-field-table th {
 	font-weight: bold;
+}
+table.tp-field-table textarea {
+	height: 100px;
 }
 </style>
 <div class="wrap">
