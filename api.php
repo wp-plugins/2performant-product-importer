@@ -1,7 +1,7 @@
 <?php
 $pear_dir = WP_PLUGIN_DIR . '/' . str_replace( basename( __FILE__ ), '', plugin_basename( __FILE__ ) ) . 'api';
 set_include_path( get_include_path() . PATH_SEPARATOR . $pear_dir . PATH_SEPARATOR . $pear_dir . '/PEAR' );
-include_once 'api/2performant.php';
+include_once 'api/TPerformant.php';
 
 function tp_get_wrapper() {
 	global $tp;
@@ -42,6 +42,8 @@ function tp_verify_connection( &$tp = false ) {
 				trigger_error( 'API response: ' . ob_get_contents(), E_USER_WARNING );
 				ob_end_clean();
 			}
+		} catch( TPException_Transport $e ){ 
+			$errors[] = 'Invalid username and password';
 		} catch( HTTP_Request2_Exception $e ) {
 			$errors[] = 'Invalid API URL';
 		}
@@ -63,7 +65,7 @@ function tp_feed_dropdown( $options = array() ) {
 	<option value="all">All</option>
 <?php
 	$tp = tp_get_wrapper();
-	$campaigns = fix_result($tp->campaigns_listforaffiliate());
+	$campaigns = ($tp->campaigns_listforaffiliate());
 	
 	// TODO: uncomment mai jos pentru categorii de campanii
 //	$categories = array();
@@ -78,29 +80,19 @@ function tp_feed_dropdown( $options = array() ) {
 	
 	foreach ( $categories as $category_name => $category ) :
 	usort( $category, 'compareByName' );
-	/*
-?>
-	<optgroup label="<?php echo $category_name; ?>">
+	
+		foreach($category as $campaign) :
+			$feeds = fix_result($tp->product_stores_list($campaign->id));
+
+			if(!empty($feeds)) ?>
+				<option value="c_<?php echo $campaign->id; ?>" class="level-0"<?php echo $options['value'] == "c_{$campaign->id}" ? ' selected="selected"' : ''; ?>><?php echo htmlspecialchars($campaign->name); ?></option>
+			<?php
+			usort($feeds, 'compareById');
+			foreach($feeds as $feed) :?>
+				<option value="f_<?php echo $feed->id; ?>" class="level-1"<?php echo $options['value'] == "f_{$feed->id}" ? ' selected="selected"' : ''; ?>>&nbsp;&nbsp;&nbsp; <?php echo htmlspecialchars($feed->name); ?></option>
 <?php
-	//*/	
-	foreach($category as $campaign) :
-	$feeds = fix_result($tp->product_stores_list($campaign->id));
-	if(!empty($feeds))
-?>
-			<option value="c_<?php echo $campaign->id; ?>" class="level-0"<?php echo $options['value'] == "c_{$campaign->id}" ? ' selected="selected"' : ''; ?>><?php echo htmlspecialchars($campaign->name); ?></option>
-<?php
-	usort($feeds, 'compareById');
-	foreach($feeds as $feed) :
-?>
-			<option value="f_<?php echo $feed->id; ?>" class="level-1"<?php echo $options['value'] == "f_{$feed->id}" ? ' selected="selected"' : ''; ?>>&nbsp;&nbsp;&nbsp;<?php echo htmlspecialchars($feed->name); ?></option>
-<?php
-	endforeach;
-	endforeach;
-	/*
-?>
-	</optgroup>
-<?php
-	//*/
+			endforeach;
+		endforeach;
 	endforeach;
 ?>
 </select>
