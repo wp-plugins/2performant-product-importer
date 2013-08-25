@@ -80,7 +80,7 @@ function tp_register_settings() {
 					'default' => '<div class="tp-product-info">
 	<div class="tp-product-thumbnail">
 		<a href="%aff_link%">
-			<img src="%image-url%" />
+			<img src="%image_url%" />
 		</a>
 	</div>
 	<div class="tp-product-meta">
@@ -206,7 +206,7 @@ $field_names = array(
 	'description',
 	'prid',
 	'active',
-	'image-url',
+	'image_url',
 	'image_urls',
 	'aff_link'
 );

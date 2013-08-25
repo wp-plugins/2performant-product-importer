@@ -153,6 +153,7 @@
 	$(document).ready(function(){			
 		$('#tp_product_list_container').html($('<img />').attr('src', tpBaseUrl+'/img/loading.gif').css('display', 'block').css('margin','30px auto'));
 
+		console.log(ajaxurl);
 		$.post(
 			ajaxurl,
 			{
@@ -163,6 +164,7 @@
 				s: $('#tp_add_filter_search').val()
 			},
 			function(r) {
+				console.log("aaa");
 				$('#tp_product_list_container').html(r);
 				var productEntrySelector = 'ul.tp-product-list > li.tp-product-list-entry';
 				$.tpplProcessContent({
@@ -255,7 +257,7 @@
 						return false;
 					});
 		
-					$('#' + taxonomy + 'checklist li.popular-category :checkbox, #' + taxonomy + 'checklist-pop :checkbox').live( 'click', function(){
+					$('#' + taxonomy + 'checklist li.popular-category :checkbox, #' + taxonomy + 'checklist-pop :checkbox').on( 'click', function(){
 						var t = $(this), c = t.is(':checked'), id = t.val();
 						if ( id && t.parents('#taxonomy-'+taxonomy).length )
 							$('#in-' + taxonomy + '-' + id + ', #in-popular-' + taxonomy + '-' + id).checkCheckbox( c );

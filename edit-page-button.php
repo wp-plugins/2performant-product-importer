@@ -77,7 +77,7 @@ function tp_ajax_insertproduct_container() {
 ?>
 	<li class="tp-product-list-entry<?php echo !($i = ++$i % 4) ? " clear" : ''; ?>">
 		<p class="tp-product-image product-<?php echo $product->id; ?>">
-			<a href="<?php echo $product->url; ?>" target="_blank"><img src="<?php echo $product->{'image-url'}; ?>" title="<?php echo $product->title; ?>" class="tp-product-thumbnail" /></a>
+			<a href="<?php echo $product->url; ?>" target="_blank"><img src="<?php echo $product->image_url; ?>" title="<?php echo $product->title; ?>" class="tp-product-thumbnail" /></a>
 			<br/>
 			<a href="<?php echo $product->url; ?>" target="_blank"><small><?php _e('Click for details', 'tppi'); ?></small></a>
 		</p>
@@ -85,7 +85,7 @@ function tp_ajax_insertproduct_container() {
 		<p><span class="tp-product-price product-<?php echo $product->id; ?>"><?php echo $product->price; ?></span></p>
 		
 		<input type="hidden" id="tp_product_<?php echo $product->id; ?>_id" class="tp-product-id" value="<?php echo $product->id; ?>" />
-		<input type="hidden" id="tp_product_<?php echo $product->id; ?>_feed_id" class="tp-product-feed-id" value="<?php echo $product->{'product-store-id'}; ?>" />
+		<input type="hidden" id="tp_product_<?php echo $product->id; ?>_feed_id" class="tp-product-feed-id" value="<?php echo $product->product_store_id; ?>" />
 		
 		<p class="tp-action-row submitbox">
 			<input type="button" id="tp_product_<?php echo $product->id; ?>_button" class="button-secondary tp-product-action-button product-<?php echo $product->id; ?>" value="<?php _e( 'Insert', 'tppi' ); ?>" />
