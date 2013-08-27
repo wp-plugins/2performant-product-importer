@@ -136,7 +136,6 @@ function tp_ajax_addproduct_container() {
 	$products = fix_result($products);
 	$i = -1;
 ?>
-sdafsdfdadsa
 	<ul class="tp-product-list clear">
 <?php foreach($products as $product) : ?>
 <?php 
