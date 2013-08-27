@@ -3,7 +3,7 @@
 Plugin Name: 2Performant Product Importer
 Plugin URI: http://blog.2parale.ro/wp-plugin-2performant-product-importer-en/
 Description: Imports products from product feeds in 2Performant affiliate networks. It requires authentication as an affiliate in one of these networks. Products are imported as individual posts (or other custom post types, configurable) which can use several custom fields based on product info from the feeds. 
-Version: 0.9.9
+Version: 0.10.1
 Author: 2Parale
 Author URI: http://www.2parale.ro/
 License: GPL2
@@ -13,7 +13,7 @@ License: GPL2
 //error_reporting(E_ALL);
 //define('SCRIPT_DEBUG', true);
 
-define('TPPI_VERSION', 'v0.9.9');
+define('TPPI_VERSION', 'v0.10.1');
 
 if ( is_admin() ) :
 
@@ -35,21 +35,21 @@ function tp_plugin_menu() {
 	add_action( 'admin_print_scripts-'.$toolbox_page, 'tp_add_toolbox_script' );
 	
 	add_action('contextual_help', 'tp_plugin_settings_help', 10, 3 );
-	
-//	var_dump(plugin_basename(__FILE__));
 
 	wp_register_style( 'tp-feed-style', '/wp-content/plugins/'.dirname(plugin_basename(__FILE__)).'/css/2p.css' );
 	wp_register_style( 'jquery-ui-redmond', '/wp-content/plugins/'.dirname(plugin_basename(__FILE__)).'/css/redmond/jquery-ui-1.8.5.custom.css' );
-	wp_register_script( 'jquery-infinitescroll', '/wp-content/plugins/'.dirname(plugin_basename(__FILE__)).'/js/jquery.infinitescroll.js', array('jquery'), 'v1.5', true );
-	wp_register_script( 'jquery-ui-progressbar', '/wp-content/plugins/'.dirname(plugin_basename(__FILE__)).'/js/jquery-ui-1.8.5.progressbar.min.js', array( 'jquery' ), 'v1.8.5', true );
-	wp_register_script( 'tp-jquery-product-list', '/wp-content/plugins/'.dirname(plugin_basename(__FILE__)).'/js/jquery.productlist.js', array( 'jquery', 'jquery-infinitescroll' ), TPPI_VERSION, true );
-	wp_register_script( 'tp-settings-script', '/wp-content/plugins/'.dirname(plugin_basename(__FILE__)).'/js/settings.js', array( 'jquery' ), TPPI_VERSION, true );
-	wp_register_script( 'tp-feed-script', '/wp-content/plugins/'.dirname(plugin_basename(__FILE__)).'/js/feed.js', array( 'jquery', 'tp-jquery-product-list', 'wp-lists' ), TPPI_VERSION, true );
-	wp_register_script( 'tp-edit-script', '/wp-content/plugins/'.dirname(plugin_basename(__FILE__)).'/js/edit.js', array( 'jquery' ), TPPI_VERSION );
-	wp_register_script( 'tp-insert-script', '/wp-content/plugins/'.dirname(plugin_basename(__FILE__)).'/js/insert.js', array( 'jquery' ), TPPI_VERSION );
-	wp_register_script( 'tp-listing-script', '/wp-content/plugins/'.dirname(plugin_basename(__FILE__)).'/js/listing.js', array( 'jquery' ), TPPI_VERSION, true );
-	wp_register_script( 'tp-toolbox-script', '/wp-content/plugins/'.dirname(plugin_basename(__FILE__)).'/js/toolbox.js', array( 'jquery', 'jquery-ui-progressbar' ), TPPI_VERSION, true );
-	wp_register_script( 'tp-tinymce-insert-script', '/wp-content/plugins/'.dirname(plugin_basename(__FILE__)).'/tinymce-insert/js/insert.js', array( 'jquery', 'tp-jquery-product-list' ), TPPI_VERSION );
+	wp_register_script( 'jquery-2ppi', '/wp-content/plugins/'.dirname(plugin_basename(__FILE__)).'/js/jquery-1.10.2.min.js');
+	wp_register_script( 'jquery-browser', '/wp-content/plugins/'.dirname(plugin_basename(__FILE__)).'/js/jquery-browser.js', array('jquery-2ppi'));
+	wp_register_script( 'jquery-infinitescroll', '/wp-content/plugins/'.dirname(plugin_basename(__FILE__)).'/js/jquery.infinitescroll.js', array('jquery-2ppi', 'jquery-browser'), 'v1.5', true );
+	wp_register_script( 'jquery-ui-progressbar', '/wp-content/plugins/'.dirname(plugin_basename(__FILE__)).'/js/jquery-ui-1.8.5.progressbar.min.js', array( 'jquery-2ppi', 'jquery-browser' ), 'v1.8.5', true );
+	wp_register_script( 'tp-jquery-product-list', '/wp-content/plugins/'.dirname(plugin_basename(__FILE__)).'/js/jquery.productlist.js', array( 'jquery-2ppi', 'jquery-browser', 'jquery-infinitescroll' ), TPPI_VERSION, true );
+	wp_register_script( 'tp-settings-script', '/wp-content/plugins/'.dirname(plugin_basename(__FILE__)).'/js/settings.js', array( 'jquery-2ppi', 'jquery-browser' ), TPPI_VERSION, true );
+	wp_register_script( 'tp-feed-script', '/wp-content/plugins/'.dirname(plugin_basename(__FILE__)).'/js/feed.js', array( 'jquery-2ppi', 'jquery-browser', 'tp-jquery-product-list', 'wp-lists' ), TPPI_VERSION, true );
+	wp_register_script( 'tp-edit-script', '/wp-content/plugins/'.dirname(plugin_basename(__FILE__)).'/js/edit.js', array( 'jquery-2ppi', 'jquery-browser' ), TPPI_VERSION );
+	wp_register_script( 'tp-insert-script', '/wp-content/plugins/'.dirname(plugin_basename(__FILE__)).'/js/insert.js', array( 'jquery-2ppi', 'jquery-browser' ), TPPI_VERSION );
+	wp_register_script( 'tp-listing-script', '/wp-content/plugins/'.dirname(plugin_basename(__FILE__)).'/js/listing.js', array( 'jquery-2ppi', 'jquery-browser' ), TPPI_VERSION, true );
+	wp_register_script( 'tp-toolbox-script', '/wp-content/plugins/'.dirname(plugin_basename(__FILE__)).'/js/toolbox.js', array( 'jquery-2ppi', 'jquery-browser', 'jquery-ui-progressbar' ), TPPI_VERSION, true );
+	wp_register_script( 'tp-tinymce-insert-script', '/wp-content/plugins/'.dirname(plugin_basename(__FILE__)).'/tinymce-insert/js/insert.js', array( 'jquery-2ppi', 'jquery-browser', 'tp-jquery-product-list' ), TPPI_VERSION );
 }
 
 function tp_add_settings_script() {
@@ -119,10 +119,10 @@ function tp_product_shortcode( $atts ) {
 		ob_start();
 ?>
 	<div class="tp-product-info">
-<?php if( isset($pinfo->{'image-url'} ) ) : ?>
+<?php if( isset($pinfo->image_url ) ) : ?>
 		<div class="tp-product-thumbnail">
 			<a href="<?php echo esc_attr( $pinfo->aff_link ); ?>">
-				<img src="<?php echo esc_attr( $pinfo->{'image-url'} ); ?>" />
+				<img src="<?php echo esc_attr( $pinfo->image_url ); ?>" />
 			</a>
 		</div>
 <?php endif; ?>
